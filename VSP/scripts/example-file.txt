@@ -1,0 +1,1 @@
+This is an example file for the VSP step1 demo.\nReplace with your own document when testing file uploads.\n

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>VSP - Start New Request</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Vendor Selection Platform — Step 1</h1>
+      <p class="muted">A small JSON-driven demo UI to start a new vendor selection request (with file upload)</p>
+
+      <div id="schema-list" class="card">
+        <h2>Choose a form schema</h2>
+        <div id="schemas"></div>
+      </div>
+
+      <div id="form-area" class="card" hidden>
+        <h2 id="form-title"></h2>
+        <p id="form-desc" class="muted"></p>
+        <form id="dynamic-form">
+          <div id="form-fields"></div>
+          <div id="file-area"></div>
+          <div class="form-actions">
+            <button type="submit">Submit Request</button>
+            <button type="button" id="reset">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="result-area" class="card" hidden>
+        <h3>Last response</h3>
+        <pre id="result"></pre>
+      </div>
+
+      <div class="card" id="existing-requests">
+        <h3>Existing requests</h3>
+        <div id="requests-list">(loading...)</div>
+      </div>
+
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>

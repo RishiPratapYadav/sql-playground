@@ -1,0 +1,14 @@
+{
+  "id": "new_request",
+  "title": "New Vendor Request",
+  "description": "Start a new vendor selection session. Fill the fields below and attach supporting documents (e.g., RFP, scope, budgets).",
+  "fields": [
+    { "name": "projectName", "type": "text", "label": "Project Name", "placeholder": "Short name for this request", "required": true },
+    { "name": "description", "type": "textarea", "label": "Description", "placeholder": "High level summary of the request" },
+    { "name": "procurementType", "type": "select", "label": "Procurement Type", "options": ["Goods", "Services", "Consulting"], "required": true },
+    { "name": "budget", "type": "number", "label": "Estimated Budget (USD)", "placeholder": "Enter numeric amount" },
+    { "name": "decisionDeadline", "type": "date", "label": "Decision Deadline" },
+    { "name": "keyCriteria", "type": "checkbox", "label": "Key Selection Criteria", "options": ["Price", "Quality", "Delivery", "Support"] }
+  ],
+  "controls": { "allowUpload": true }
+}
