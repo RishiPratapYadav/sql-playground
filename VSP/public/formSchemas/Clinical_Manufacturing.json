@@ -1,0 +1,10 @@
+{
+  "id": "Clinical_Manufacturing",
+  "title": "Clinical — Manufacturing Details",
+  "description": "Extra questions when Request Type = Clinical and Services Needed = Manufacturing",
+  "fields": [
+    { "name": "clinical_scale", "label": "Manufacturing Scale", "type": "select", "options": ["Small (batch)", "Medium (lot)", "Large (scale up)"] },
+    { "name": "ct_qa_requirements", "label": "QA / Regulatory Notes", "type": "textarea", "placeholder": "Enter any QA/regulatory needs specific to clinical manufacturing" }
+  ],
+  "controls": { "allowUpload": false }
+}

@@ -16,18 +16,25 @@ async function loadSchemas() {
     container.innerText = 'No schemas found in /public/formSchemas/*.json';
     return;
   }
-  // render schema cards
+  // render schema cards; label new_request special
   schemas.forEach(s => {
     const card = document.createElement('div');
     card.className = 'schema-card';
     const h = document.createElement('div'); h.innerText = s.id; h.style.fontWeight = '700';
     card.appendChild(h);
     const loadBtn = document.createElement('button');
-    loadBtn.innerText = 'Use this form';
-    loadBtn.onclick = () => loadSchema(s.file);
+    if (s.id === 'new_request') {
+      loadBtn.innerText = 'Open Start Form';
+      loadBtn.className = 'primary';
+      loadBtn.onclick = () => loadSchema(s.file);
+    } else {
+      loadBtn.innerText = 'Use this form';
+      loadBtn.onclick = () => loadSchema(s.file);
+    }
     card.appendChild(loadBtn);
     container.appendChild(card);
   });
+  return schemas;
 }
 
 // refresh handler added to UI (refresh button will be wired in init)
@@ -74,6 +81,15 @@ async function loadSchema(filePath) {
     fieldsNode.appendChild(wrapper);
   });
 
+  // ensure we have a form reference for handlers
+  const form = document.getElementById('dynamic-form');
+
+  // attach handlers to possibly trigger subform loading when request_type or services_needed change
+  const rt = form.elements['request_type'];
+  const sd = form.elements['services_needed'];
+  if (rt) rt.onchange = () => loadSubformIfReady(rt.value, sd ? sd.value : null);
+  if (sd) sd.onchange = () => loadSubformIfReady(rt ? rt.value : null, sd.value);
+
   // upload area & hidden originalId (for resume/edit)
   const fileArea = document.getElementById('file-area');
   fileArea.innerHTML = '';
@@ -94,7 +110,7 @@ async function loadSchema(filePath) {
   }
 
   // submit handler
-  const form = document.getElementById('dynamic-form');
+  // `form` already defined above
   form.onsubmit = async (ev) => {
     ev.preventDefault();
     const fd = new FormData();
@@ -115,10 +131,26 @@ async function loadSchema(filePath) {
       for (let i=0;i<fileInput.files.length;i++) fd.append('files', fileInput.files[i]);
     }
 
+    // include subform fields into submit data if present
+    if (currentSubformSchema) {
+      currentSubformSchema.fields.forEach(f => {
+        if (f.type === 'checkbox') {
+          const vals = Array.from(document.getElementsByName(f.name)).filter(i=>i.checked).map(i=>i.value);
+          fd.append(f.name, JSON.stringify(vals));
+        } else {
+          const el = form.elements[f.name]; if (!el) return;
+          fd.append(f.name, el.value);
+        }
+      });
+    }
+
     // if editing/resuming, include original id so server can see the intention
     const orig = document.getElementById('originalRequestId');
-    if (orig && orig.value) fd.append('originalId', orig.value);
-
+    if (orig && orig.value) {
+      fd.append('originalId', orig.value);
+      // if we're finalizing an existing draft, mark submitted
+      fd.append('status', 'submitted');
+    }
     const resp = await fetch('/api/requests', { method: 'POST', body: fd });
     const json = await resp.json();
     showToast('Request submitted ✓', 3000);
@@ -129,7 +161,115 @@ async function loadSchema(filePath) {
     await loadRequests();
   };
 
+    // include subform fields into submit data if present
+    
+
   document.getElementById('reset').onclick = () => form.reset();
+
+  // If this is the 'new_request' schema, show a Next button to save draft and continue
+  const toolbar = document.querySelector('#form-area .form-actions') || form.querySelector('.form-actions');
+  // add next button if not present
+  let nextBtn = document.getElementById('nextBtn');
+  if (schema.id === 'new_request') {
+    if (!nextBtn) {
+      nextBtn = document.createElement('button'); nextBtn.type='button'; nextBtn.id='nextBtn'; nextBtn.innerText = 'Next — save & continue';
+      nextBtn.style.marginLeft = '8px';
+      // insert next button before reset
+      const resetBtn = document.getElementById('reset');
+      resetBtn.parentNode.insertBefore(nextBtn, resetBtn);
+    }
+    nextBtn.onclick = async () => {
+      // create a draft with main schema fields - include files if present
+      const fd = new FormData();
+      schema.fields.forEach(f => {
+        if (f.type === 'checkbox') {
+          const vals = Array.from(document.getElementsByName(f.name)).filter(i=>i.checked).map(i=>i.value);
+          fd.append(f.name, JSON.stringify(vals));
+        } else {
+          const el = form.elements[f.name]; if (!el) return; fd.append(f.name, el.value);
+        }
+      });
+      // files
+      const fileInput = form.querySelector('input[type=file]');
+      if (fileInput && fileInput.files.length) {
+        for (let i=0;i<fileInput.files.length;i++) fd.append('files', fileInput.files[i]);
+      }
+      // mark as draft
+      fd.append('status', 'draft');
+
+      const resp = await fetch('/api/requests', { method: 'POST', body: fd });
+      const json = await resp.json();
+      if (json && json.success) {
+        // set original request id so subsequent submits update the same entry
+        let orig = document.getElementById('originalRequestId');
+        if (!orig) { orig = document.createElement('input'); orig.type='hidden'; orig.id='originalRequestId'; orig.name='originalId'; form.appendChild(orig); }
+        orig.value = json.id;
+        showToast('Draft saved — proceed to additional details', 2500);
+        // if type + service selections are present, try loading the subform
+        const rtVal = form.elements['request_type'] ? form.elements['request_type'].value : null;
+        const sdVal = form.elements['services_needed'] ? form.elements['services_needed'].value : null;
+        if (rtVal && sdVal) await loadSubformIfReady(rtVal, sdVal);
+      } else {
+        showToast('Failed saving draft — try again', 3000);
+      }
+    };
+  } else {
+    if (nextBtn) nextBtn.remove();
+  }
+}
+
+// keep currently loaded subform schema in memory
+let currentSubformSchema = null;
+
+function sanitizeForFilename(s) {
+  if (!s) return '';
+  return String(s).trim().replace(/\s+/g, '_').replace(/[^A-Za-z0-9_\-]/g, '');
+}
+
+async function loadSubformIfReady(requestType, serviceNeeded) {
+  // both values required to look-up a combination schema
+  if (!requestType || !serviceNeeded) {
+    document.getElementById('subform-area').hidden = true;
+    currentSubformSchema = null;
+    document.getElementById('subform-fields').innerHTML = '';
+    return;
+  }
+
+  const file = `/formSchemas/${sanitizeForFilename(requestType)}_${sanitizeForFilename(serviceNeeded)}.json`;
+  try {
+    const schema = await fetchJSON(file);
+    // render into subform-fields area
+    currentSubformSchema = schema;
+    const area = document.getElementById('subform-area');
+    area.hidden = false;
+    document.getElementById('subform-title').innerText = schema.title || 'Additional details';
+    const fieldsNode = document.getElementById('subform-fields');
+    fieldsNode.innerHTML = '';
+    (schema.fields || []).forEach(f => {
+      const wrapper = document.createElement('div');
+      const label = document.createElement('label'); label.innerText = f.label || f.name; wrapper.appendChild(label);
+      let input;
+      switch (f.type) {
+        case 'textarea': input = document.createElement('textarea'); break;
+        case 'select': input = document.createElement('select'); (f.options||[]).forEach(opt=>{ const o=document.createElement('option'); o.value=opt; o.innerText=opt; input.appendChild(o);}); break;
+        case 'checkbox':
+          input = document.createElement('div');
+          (f.options || []).forEach(opt => { const id=`${f.name}_${opt}`; const cb=document.createElement('input'); cb.type='checkbox'; cb.id=id; cb.name=f.name; cb.value=opt; const lb=document.createElement('label'); lb.htmlFor=id; lb.style.marginLeft='6px'; lb.innerText = opt; const block=document.createElement('div'); block.appendChild(cb); block.appendChild(lb); input.appendChild(block); });
+          break;
+        default: input = document.createElement('input'); input.type = f.type || 'text';
+      }
+      if (f.placeholder) input.placeholder = f.placeholder;
+      if (f.required && input.tagName !== 'DIV') input.required = true;
+      if (input.tagName !== 'DIV') input.name = f.name;
+      wrapper.appendChild(input);
+      fieldsNode.appendChild(wrapper);
+    });
+  } catch (err) {
+    // no subform for this combination
+    currentSubformSchema = null;
+    document.getElementById('subform-area').hidden = true;
+    document.getElementById('subform-fields').innerHTML = '';
+  }
 }
 
 async function loadRequests() {
@@ -191,8 +331,8 @@ async function loadRequestIntoForm(requestObj) {
     if (schemas.length) await loadSchema(schemas[0].file);
   }
 
-  // Wait a short while for DOM inputs to exist
-  setTimeout(()=>{
+  // Wait a short while for DOM inputs to exist so onchange handlers and subform wiring are present
+  setTimeout(async ()=>{
     const form = document.getElementById('dynamic-form');
     Object.keys(requestObj.body || {}).forEach(k => {
       const val = requestObj.body[k];
@@ -217,12 +357,48 @@ async function loadRequestIntoForm(requestObj) {
     const prev = document.createElement('div'); prev.className='small muted';
     prev.innerHTML = 'Previously uploaded: ' + (requestObj.files && requestObj.files.length ? requestObj.files.map(f => `<a href="${f.path}" target="_blank">${f.originalname}</a>`).join(', ') : 'none');
     fileArea.appendChild(prev);
+    // if request includes request_type and services_needed try to load the matching subform
+    const rt = requestObj.body && requestObj.body.request_type ? requestObj.body.request_type : null;
+    const sd = requestObj.body && requestObj.body.services_needed ? requestObj.body.services_needed : null;
+    if (rt && sd) {
+      await loadSubformIfReady(rt, sd);
+      // populate subform values after it's rendered
+      (currentSubformSchema && currentSubformSchema.fields || []).forEach(f => {
+        const val = requestObj.body[f.name];
+        if (val === undefined) return;
+        if (f.type === 'checkbox') {
+          const els = document.getElementsByName(f.name);
+          try {
+            const arr = Array.isArray(val) ? val : (typeof val === 'string' ? JSON.parse(val) : [val]);
+            Array.from(els).forEach(ch => { ch.checked = arr.includes(ch.value); });
+          } catch(e) {
+            // fallback
+          }
+        } else {
+          const el = document.getElementById('dynamic-form').elements[f.name]; if (!el) return; el.value = val;
+        }
+      });
+    }
     showToast('Loaded request into form — edit and submit to create a new request', 3000);
   }, 100);
 }
 
 (async function init() {
-  await loadSchemas();
+  const schemas = await loadSchemas();
+  // Auto-start with 'new_request' if present
+  const startBtn = document.getElementById('start-new');
+  if (startBtn) startBtn.onclick = async () => {
+    const nr = schemas.find(s => s.id === 'new_request');
+    if (nr) {
+      await loadSchema(nr.file);
+      showToast('Started new request', 1200);
+    } else {
+      showToast('new_request schema not found', 2000);
+    }
+  };
+  // auto-open new_request so the workflow starts there
+  const nr = schemas.find(s => s.id === 'new_request');
+  if (nr) { await loadSchema(nr.file); }
   await loadRequests();
 
   const rb = document.getElementById('refresh-schemas');

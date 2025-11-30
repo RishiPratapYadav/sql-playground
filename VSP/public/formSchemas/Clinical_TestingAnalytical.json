@@ -1,0 +1,10 @@
+{
+  "id": "Clinical_TestingAnalytical",
+  "title": "Clinical — Testing / Analytical Details",
+  "description": "Extra fields for clinical testing/analytical service requests",
+  "fields": [
+    { "name": "analytical_methods", "label": "Analytical Methods", "type": "textarea", "placeholder": "Describe required analytical methods" },
+    { "name": "stability_testing_required", "label": "Stability testing needed?", "type": "select", "options": ["Yes", "No"] }
+  ],
+  "controls": { "allowUpload": true }
+}

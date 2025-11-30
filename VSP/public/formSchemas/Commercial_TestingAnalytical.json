@@ -1,0 +1,10 @@
+{
+  "id": "Commercial_TestingAnalytical",
+  "title": "Commercial — Testing / Analytical Details",
+  "description": "Testing and analytical details for commercial requests",
+  "fields": [
+    { "name": "commercial_test_scope", "label": "Scope of testing", "type": "textarea" },
+    { "name": "qc_requirements", "label": "QC / acceptance criteria", "type": "textarea" }
+  ],
+  "controls": { "allowUpload": true }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "Commercial_Manufacturing",
+  "title": "Commercial — Manufacturing Details",
+  "description": "Commercial manufacturing details (high-volume)",
+  "fields": [
+    { "name": "commercial_scale", "label": "Preferred production scale", "type": "select", "options": ["Pilot", "Commercial-small", "Commercial-large"] },
+    { "name": "sop_compatibility", "label": "SOP compatibility notes", "type": "textarea" }
+  ],
+  "controls": { "allowUpload": false }
+}

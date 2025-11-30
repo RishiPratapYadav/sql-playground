@@ -12,12 +12,18 @@
       <p class="muted">A small JSON-driven demo UI to start a new vendor selection request (with new file upload)</p>
 
       <div id="schema-list" class="card">
-        <h2>Choose a form schema</h2>
-        <p class="muted">Forms are driven by JSON files in <code>/formSchemas</code>. Select one to start a new request.</p>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+        <h2>Start a request</h2>
+        <p class="muted">Start new vendor request from the canonical <code>new_request</code> form. The UI will then load additional, combination-specific subforms based on Request Type & Services Needed.</p>
+
+        <div class="schema-grid" style="align-items:flex-start;">
           <div id="schemas" class="schema-grid"></div>
-          <div style="margin-left:auto"><button id="refresh-schemas">Refresh</button></div>
+          <div style="width:220px; margin-left:8px; display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <button id="start-new">Start New Request</button>
+            <button id="refresh-schemas">Refresh</button>
+          </div>
         </div>
+
+        <p class="muted small" style="margin-top:12px">(Tip: the app automatically loads <code>new_request</code> as the first step; other schemas are available for testing.)</p>
       </div>
 
       <div id="form-area" class="card" hidden>
@@ -25,6 +31,10 @@
         <p id="form-desc" class="muted"></p>
         <form id="dynamic-form">
           <div id="form-fields"></div>
+          <div id="subform-area" style="margin-top:12px" hidden>
+            <h3 id="subform-title">Additional details</h3>
+            <div id="subform-fields"></div>
+          </div>
           <div id="file-area"></div>
           <div class="form-actions">
             <button type="submit">Submit Request</button>

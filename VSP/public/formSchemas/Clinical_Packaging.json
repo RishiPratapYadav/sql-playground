@@ -1,0 +1,10 @@
+{
+  "id": "Clinical_Packaging",
+  "title": "Clinical — Packaging Details",
+  "description": "Packaging details for clinical requests",
+  "fields": [
+    { "name": "clinical_packaging_requirements", "label": "Packaging Requirements", "type": "textarea", "placeholder": "Describe any special packaging requirements for clinical use" },
+    { "name": "sterility_needed", "label": "Sterility required?", "type": "select", "options": ["Yes", "No"] }
+  ],
+  "controls": { "allowUpload": false }
+}

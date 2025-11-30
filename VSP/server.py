@@ -38,7 +38,7 @@ def read_all_requests():
         # if file is missing/corrupt, return empty list rather than crashing
         return []
 
-
+   
 def write_all_requests(data):
     # write to a temp file then atomically replace to avoid partial writes
     tmp = DATA_FILE + '.tmp'
@@ -86,8 +86,33 @@ async def create_request(request: Request):
             body[key] = value
 
     data = read_all_requests()
+
+    # If originalId provided, update existing request instead of creating a new one
+    original_id = body.pop('originalId', None) or body.pop('original_id', None)
+    status = body.pop('status', None)
+    if original_id:
+        # find entry
+        for e in data:
+            if e.get('id') == original_id:
+                # merge body (existing keys overwritten)
+                e_body = e.setdefault('body', {})
+                e_body.update(body)
+                # append any new files
+                if saved_files:
+                    e.setdefault('files', []).extend(saved_files)
+                # update status if provided
+                if status:
+                    e['status'] = status
+                e['updatedAt'] = datetime.utcnow().isoformat() + 'Z'
+                write_all_requests(data)
+                return {'success': True, 'id': e['id'], 'entry': e}
+        # not found
+        return JSONResponse({'error': 'originalId not found'}, status_code=404)
+
     new_id = f"REQ-{int(datetime.utcnow().timestamp()*1000)}"
     entry = {'id': new_id, 'createdAt': datetime.utcnow().isoformat() + 'Z', 'body': body, 'files': saved_files}
+    if status:
+        entry['status'] = status
     # debug log for demo: show what we're saving
     print('create_request -> body keys:', list(body.keys()), 'files count:', len(saved_files))
     data.append(entry)

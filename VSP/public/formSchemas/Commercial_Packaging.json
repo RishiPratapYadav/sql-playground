@@ -1,0 +1,10 @@
+{
+  "id": "Commercial_Packaging",
+  "title": "Commercial — Packaging Details",
+  "description": "Extra questions when Request Type = Commercial and Services Needed = Packaging",
+  "fields": [
+    { "name": "packaging_format", "label": "Packaging Format", "type": "select", "options": ["Blister", "Bottle", "Sachet", "Box"] },
+    { "name": "packaging_materials", "label": "Preferred Materials", "type": "text", "placeholder": "e.g., PET, HDPE, Paperboard" }
+  ],
+  "controls": { "allowUpload": false }
+}

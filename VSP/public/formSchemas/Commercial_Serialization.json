@@ -1,0 +1,10 @@
+{
+  "id": "Commercial_Serialization",
+  "title": "Commercial — Serialization Details",
+  "description": "Serialization details for commercial-scale requests",
+  "fields": [
+    { "name": "commercial_serialization_units", "label": "Serialization unit level", "type": "select", "options": ["Unit", "Case", "Pallet"] },
+    { "name": "serialization_vendor_req", "label": "Vendor serialization notes", "type": "textarea" }
+  ],
+  "controls": { "allowUpload": false }
+}

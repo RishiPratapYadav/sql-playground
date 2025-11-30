@@ -1,0 +1,10 @@
+{
+  "id": "Clinical_Serialization",
+  "title": "Clinical — Serialization Details",
+  "description": "Fields for serialization requirements in clinical requests",
+  "fields": [
+    { "name": "serialization_type", "label": "Serialization (units)", "type": "select", "options": ["Unit-level", "Package-level", "Batch-level"] },
+    { "name": "traceability_requirements", "label": "Traceability details", "type": "textarea" }
+  ],
+  "controls": { "allowUpload": false }
+}

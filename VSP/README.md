@@ -45,5 +45,15 @@ For automated testing, there's an example script: `scripts/demo_submit.sh` (make
 
 What to try next:
 - Add more form schemas and controls in `public/formSchemas`
+ - Add per-combination subforms: place JSON files named `RequestType_ServiceNeeded.json` under `public/formSchemas` (e.g. `Clinical_Manufacturing.json`) to automatically show additional fields when the user selects those combinations.
+
+Multi-step flow
+----------------
+This demo supports a two-step request flow where `New Request` is the starting point:
+
+1. Start with `new_request.json` — fill the main request fields and click **Next — save & continue**. The demo will save a draft request and return a request id.
+2. The UI will automatically load the combination-specific subform if a matching `{RequestType}_{ServicesNeeded}.json` file exists (e.g., `Clinical_Manufacturing.json`). Fill the additional fields and click Submit to finalize. The server will update the same request id (status changed to `submitted`).
+
+Use cases: this allows the user to create an initial request, then present different follow-up forms dynamically depending on selected types/services.
 - Implement edit / resume drafting for requests
 - Add user accounts and role-based workflows for human-in-loop approvals

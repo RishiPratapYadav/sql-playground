@@ -1,6 +1,6 @@
 {
   "id": "new_request",
-  "title": "New Vendor Request 23",
+  "title": "New Vendor Request",
   "description": "Start a new vendor selection session. Fill the fields below and attach supporting documents (e.g., RFP, scope, budgets).",
   "fields": [
     { "name": "projectName", "type": "text", "label": "Project Name", "placeholder": "Short name for this request", "required": true },
