@@ -101,12 +101,12 @@ def get_upload(filename: str):
     if os.path.exists(path):
         return FileResponse(path)
     return JSONResponse({'error': 'not found'}, status_code=404)
-
-
+ 
+  
 @app.get('/')
 def index():
     index_file = os.path.join(BASE_DIR, 'public', 'index.html')
     if os.path.exists(index_file):
         return FileResponse(index_file, media_type='text/html')
-    return HTMLResponse('<html><body><h1>VSP Step1</h1></body></html>')
+    return HTMLResponse('<html><body><h1>VSP Step34</h1></body></html>')
 

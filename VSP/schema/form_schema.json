@@ -1,0 +1,14 @@
+{
+  "title": "Pharma Vendor Selection Form",
+  "fields": [
+    { "name": "company_name", "label": "Company Name", "type": "text", "section": "Client Information" },
+    { "name": "primary_contact", "label": "Primary Contact", "type": "text", "section": "Client Information" },
+    { "name": "email", "label": "Email", "type": "email", "section": "Client Information" },
+    { "name": "project_name", "label": "Project Name", "type": "text", "section": "Project Information" },
+    { "name": "company_stage", "label": "Company Stage", "type": "select", "options": ["Startup", "Small", "Mid-size", "Large", "Enterprise"], "section": "Project Information" },
+    { "name": "request_type", "label": "Request Type", "type": "select", "options": ["Clinical", "Commercial"], "section": "Service Requirements" },
+    { "name": "services_needed", "label": "Services Needed", "type": "select", "options": ["Manufacturing", "Packaging", "Testing/Analytical", "Serialization"], "section": "Service Requirements" },
+    { "name": "target_markets", "label": "Target Markets", "type": "checkbox", "options": ["United States (FDA)", "European Union (EMA)", "Japan (PMDA)", "China (NMPA)"], "section": "Regulatory Scope" },
+    { "name": "additional_info", "label": "Any other information helpful for vendor selection", "type": "textarea", "section": "Strategic Context" }
+  ]
+}

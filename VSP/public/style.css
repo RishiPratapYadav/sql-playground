@@ -11,3 +11,23 @@ form input, form select, form textarea { width:100%; padding:8px; border-radius:
 button { padding:8px 12px; border-radius:6px; border:1px solid rgba(0,0,0,0.05); background:#fff; cursor:pointer }
 pre { background:#0e1113; color:#eaeaea; padding:12px; border-radius:6px; overflow:auto }
 .small { font-size: .9rem }
+
+/* Schema grid */
+.schema-grid { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px }
+.schema-card { padding:12px; border-radius:8px; border:1px solid #eee; width:220px; background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%); }
+.schema-card h3{ margin:0 }
+.schema-card button{ display:block; width:100%; text-align:left; padding:8px; margin-top:8px }
+
+/* Toasts */
+.toast { position: fixed; right: 20px; bottom: 20px; background: #0b72e8; color: white; padding:10px 14px; border-radius:8px; box-shadow: 0 6px 18px rgba(0,0,0,0.16); }
+
+#refresh-schemas { background: #f5f7fb; border:1px solid #e7eefc; padding:6px 10px; border-radius:6px; cursor:pointer }
+
+/* Request list improvements */
+#requests-list div { margin-bottom:14px }
+.request-actions { margin-top:8px }
+.request-actions button { margin-right:8px }
+
+.file-list { margin-top:6px; font-size:0.95rem }
+.file-list a { color: var(--accent) }
+

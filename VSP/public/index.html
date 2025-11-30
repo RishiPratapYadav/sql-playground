@@ -4,16 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>VSP - Start New Request</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
     <div class="container">
       <h1>Vendor Selection Platform — Step 1</h1>
-      <p class="muted">A small JSON-driven demo UI to start a new vendor selection request (with file upload)</p>
+      <p class="muted">A small JSON-driven demo UI to start a new vendor selection request (with new file upload)</p>
 
       <div id="schema-list" class="card">
         <h2>Choose a form schema</h2>
-        <div id="schemas"></div>
+        <p class="muted">Forms are driven by JSON files in <code>/formSchemas</code>. Select one to start a new request.</p>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <div id="schemas" class="schema-grid"></div>
+          <div style="margin-left:auto"><button id="refresh-schemas">Refresh</button></div>
+        </div>
       </div>
 
       <div id="form-area" class="card" hidden>
@@ -34,12 +38,15 @@
         <pre id="result"></pre>
       </div>
 
+      <div id="toast" class="toast" hidden></div>
+
+
       <div class="card" id="existing-requests">
         <h3>Existing requests</h3>
         <div id="requests-list">(loading...)</div>
       </div>
 
     </div>
-    <script src="/app.js"></script>
+    <script src="/static/app.js"></script>
   </body>
 </html>

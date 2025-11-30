@@ -1,13 +1,19 @@
 {
   "id": "new_request",
-  "title": "New Vendor Request",
+  "title": "New Vendor Request 23",
   "description": "Start a new vendor selection session. Fill the fields below and attach supporting documents (e.g., RFP, scope, budgets).",
   "fields": [
     { "name": "projectName", "type": "text", "label": "Project Name", "placeholder": "Short name for this request", "required": true },
     { "name": "description", "type": "textarea", "label": "Description", "placeholder": "High level summary of the request" },
-    { "name": "procurementType", "type": "select", "label": "Procurement Type", "options": ["Goods", "Services", "Consulting"], "required": true },
+    { "name": "company_name", "label": "Company Name", "type": "text", "placeholder": "Company Name" },
+    { "name": "primary_contact", "label": "Primary Contact", "type": "text", "placeholder": "Primary Contact Name" },
+    { "name": "email", "label": "Email", "type": "email", "placeholder": "Email of contact person"},
+    { "name": "request_type", "label": "Request Type", "type": "select", "options": ["Clinical", "Commercial"], "section": "Service Requirements" },
+    { "name": "services_needed", "label": "Services Needed", "type": "select", "options": ["Manufacturing", "Packaging", "Testing/Analytical", "Serialization"] },
+    { "name": "target_markets", "label": "Target Markets", "type": "checkbox", "options": ["United States (FDA)", "European Union (EMA)", "Japan (PMDA)", "China (NMPA)"]},
     { "name": "budget", "type": "number", "label": "Estimated Budget (USD)", "placeholder": "Enter numeric amount" },
     { "name": "decisionDeadline", "type": "date", "label": "Decision Deadline" },
+    { "name": "additional_info", "label": "Any other information helpful for vendor selection", "type": "textarea" },
     { "name": "keyCriteria", "type": "checkbox", "label": "Key Selection Criteria", "options": ["Price", "Quality", "Delivery", "Support"] }
   ],
   "controls": { "allowUpload": true }
