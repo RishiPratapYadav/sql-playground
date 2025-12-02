@@ -1,0 +1,69 @@
+[
+  {
+    "createdAt": "2025-12-02T02:31:22.749117Z",
+    "request": {
+      "projectName": "Validation test: Packaging",
+      "description": "Test request to run selection without OpenAI",
+      "request_type": "Commercial",
+      "services_needed": "Packaging",
+      "target_markets": [
+        "United States (FDA)",
+        "European Union (EMA)"
+      ],
+      "keyCriteria": [
+        "Quality",
+        "Delivery"
+      ]
+    },
+    "retrieval_candidates": [
+      {
+        "name": "PharmaPro Partners",
+        "score": 90.0
+      },
+      {
+        "name": "EuroPharm Logistics",
+        "score": 85.0
+      },
+      {
+        "name": "Acme Biologics",
+        "score": 84.0
+      },
+      {
+        "name": "MedPack Services",
+        "score": 84.0
+      },
+      {
+        "name": "SterilePack Inc.",
+        "score": 83.0
+      }
+    ],
+    "final_selection": [
+      {
+        "name": "PharmaPro Partners",
+        "score": 90,
+        "reason": "Matched requested services and markets"
+      },
+      {
+        "name": "EuroPharm Logistics",
+        "score": 85,
+        "reason": "Matched requested services and markets"
+      },
+      {
+        "name": "Acme Biologics",
+        "score": 84,
+        "reason": "Matched requested services and markets"
+      },
+      {
+        "name": "MedPack Services",
+        "score": 84,
+        "reason": "Matched requested services and markets"
+      },
+      {
+        "name": "SterilePack Inc.",
+        "score": 83,
+        "reason": "Matched requested services and markets"
+      }
+    ],
+    "method": "rag_retrieval:local_rerank"
+  }
+]

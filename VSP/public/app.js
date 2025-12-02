@@ -16,24 +16,35 @@ async function loadSchemas() {
     container.innerText = 'No schemas found in /public/formSchemas/*.json';
     return;
   }
-  // render schema cards; label new_request special
-  schemas.forEach(s => {
+  // Only surface the canonical new_request schema in the UI by default.
+  // NOTE: other schema files remain on disk and accessible at /formSchemas/<name>.json,
+  // but we intentionally hide them from the user-facing schema list here.
+  const primary = schemas.find(s => s.id === 'new_request');
+  if (primary) {
     const card = document.createElement('div');
     card.className = 'schema-card';
-    const h = document.createElement('div'); h.innerText = s.id; h.style.fontWeight = '700';
+    const h = document.createElement('div'); h.innerText = primary.id; h.style.fontWeight = '700';
     card.appendChild(h);
     const loadBtn = document.createElement('button');
-    if (s.id === 'new_request') {
-      loadBtn.innerText = 'Open Start Form';
-      loadBtn.className = 'primary';
-      loadBtn.onclick = () => loadSchema(s.file);
-    } else {
-      loadBtn.innerText = 'Use this form';
-      loadBtn.onclick = () => loadSchema(s.file);
-    }
+    loadBtn.innerText = 'Open Start Form';
+    loadBtn.className = 'primary';
+    loadBtn.onclick = () => loadSchema(primary.file);
     card.appendChild(loadBtn);
     container.appendChild(card);
-  });
+  } else {
+    // If new_request is not present, fall back to listing all so developers can test.
+    schemas.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'schema-card';
+      const h = document.createElement('div'); h.innerText = s.id; h.style.fontWeight = '700';
+      card.appendChild(h);
+      const loadBtn = document.createElement('button');
+      loadBtn.innerText = 'Use this form';
+      loadBtn.onclick = () => loadSchema(s.file);
+      card.appendChild(loadBtn);
+      container.appendChild(card);
+    });
+  }
   return schemas;
 }
 
@@ -111,6 +122,7 @@ async function loadSchema(filePath) {
 
   // submit handler
   // `form` already defined above
+
   form.onsubmit = async (ev) => {
     ev.preventDefault();
     const fd = new FormData();
@@ -132,14 +144,17 @@ async function loadSchema(filePath) {
     }
 
     // include subform fields into submit data if present
+    let subformData = {};
     if (currentSubformSchema) {
       currentSubformSchema.fields.forEach(f => {
         if (f.type === 'checkbox') {
           const vals = Array.from(document.getElementsByName(f.name)).filter(i=>i.checked).map(i=>i.value);
           fd.append(f.name, JSON.stringify(vals));
+          subformData[f.name] = vals;
         } else {
           const el = form.elements[f.name]; if (!el) return;
           fd.append(f.name, el.value);
+          subformData[f.name] = el.value;
         }
       });
     }
@@ -159,6 +174,57 @@ async function loadSchema(filePath) {
     // if this was a resumed form clear the originalId (we created a new request)
     if (orig) orig.value = '';
     await loadRequests();
+
+    // --- AGENTIC VENDOR SELECTION ---
+    // Compose a request object for vendor selection
+    let reqObj = {};
+    schema.fields.forEach(f => {
+      if (f.type === 'checkbox') {
+        const vals = Array.from(document.getElementsByName(f.name)).filter(i=>i.checked).map(i=>i.value);
+        reqObj[f.name] = vals;
+      } else {
+        const el = form.elements[f.name]; if (!el) return;
+        reqObj[f.name] = el.value;
+      }
+    });
+    if (currentSubformSchema) {
+      currentSubformSchema.fields.forEach(f => {
+        if (f.type === 'checkbox') {
+          const vals = Array.from(document.getElementsByName(f.name)).filter(i=>i.checked).map(i=>i.value);
+          reqObj[f.name] = vals;
+        } else {
+          const el = form.elements[f.name]; if (!el) return;
+          reqObj[f.name] = el.value;
+        }
+      });
+    }
+    // Call the vendor selection endpoint
+    try {
+      const vresp = await fetch('/api/select_vendors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reqObj)
+      });
+      const vjson = await vresp.json();
+      if (vjson && vjson.vendors) {
+        // display in the dedicated vendor recommendations area
+        const varea = document.getElementById('vendor-recs-area');
+        const listNode = document.getElementById('vendor-recs');
+        if (vjson.vendors.length) {
+          varea.hidden = false;
+          listNode.innerHTML = '';
+          vjson.vendors.forEach((v, i) => {
+            const entry = document.createElement('div'); entry.className = 'small';
+            const title = document.createElement('div'); title.innerHTML = `<strong>${i+1}. ${v.name || v}</strong> ${v.score ? `<span class='muted'>(${v.score})</span>` : ''}`;
+            const reason = document.createElement('div'); reason.className = 'muted'; reason.style.marginTop='6px'; reason.innerText = v.reason || '';
+            entry.appendChild(title); entry.appendChild(reason);
+            listNode.appendChild(entry);
+          });
+        }
+      }
+    } catch (e) {
+      // ignore errors for now
+    }
   };
 
     // include subform fields into submit data if present

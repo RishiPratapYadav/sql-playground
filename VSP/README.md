@@ -40,6 +40,51 @@ curl -X POST -F "projectName=My Demo Project" -F "description=quick test" -F "pr
 curl -X POST -F "projectName=My Demo Project" -F "description=quick test" -F "procurementType=Services" -F "files=@./scripts/example-file.txt" http://localhost:8000/api/requests
 ```
 
+AI-driven vendor ranking (OpenAI prototype)
+-----------------------------------------
+
+This project includes a small prototype endpoint `/api/select_vendors` that will re-rank vendors using OpenAI if you provide an API key.
+
+1. Install Python requirements (ensure `openai` is installed):
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Set your OpenAI API key and optionally model name (default: `gpt-4o-mini`):
+
+```bash
+export OPENAI_API_KEY="sk-..."
+export OPENAI_MODEL="gpt-4o-mini"
+```
+
+3. Run the server and test the endpoint with the included helper script:
+
+```bash
+uvicorn server:app --reload --port 8000
+python3 scripts/test_select_vendors.py
+```
+
+If you don't set `OPENAI_API_KEY`, the server will fall back to a simple randomized selection so the endpoint stays usable for testing.
+
+Retrieval-Augmented (RAG) prototype
+-----------------------------------
+
+This repo also includes a prototype RAG pipeline that will:
+- Use OpenAI embeddings to vectorize vendor profiles (`data/vendors_catalog.json`).
+- Store embeddings in `data/vendors_embeddings.json` and perform cosine-similarity retrieval.
+- Re-rank the top candidates using the OpenAI LLM for a final, explainable top-7..9 recommendations.
+
+How to build embeddings (optional, faster on-demand than waiting for the server):
+
+```bash
+# ensure OPENAI_API_KEY is set
+export OPENAI_API_KEY="sk-..."
+python3 scripts/build_vendor_embeddings.py
+```
+
+If you build embeddings ahead of time the server will load them and respond faster. Otherwise the server will create embeddings on demand (if `OPENAI_API_KEY` is available).
+
 For automated testing, there's an example script: `scripts/demo_submit.sh` (make sure server is running)
 ```
 

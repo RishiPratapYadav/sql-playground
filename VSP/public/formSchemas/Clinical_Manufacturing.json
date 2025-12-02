@@ -4,7 +4,13 @@
   "description": "Extra questions when Request Type = Clinical and Services Needed = Manufacturing",
   "fields": [
     { "name": "clinical_scale", "label": "Manufacturing Scale", "type": "select", "options": ["Small (batch)", "Medium (lot)", "Large (scale up)"] },
-    { "name": "ct_qa_requirements", "label": "QA / Regulatory Notes", "type": "textarea", "placeholder": "Enter any QA/regulatory needs specific to clinical manufacturing" }
+    { "name": "ct_qa_requirements", "label": "QA / Regulatory Notes", "type": "textarea", "placeholder": "Enter any QA/regulatory needs specific to clinical manufacturing" },
+    { "name": "criteria_technical", "label": "Technical Capability (%)", "type": "text", "default": "30" },
+    { "name": "criteria_quality", "label": "Quality & Compliance (%)", "type": "text", "default": "25"},
+    { "name": "criteria_pm", "label": "Project Management (%)", "type": "text", "default": "15"},
+    { "name": "criteria_supply", "label": "Supply Reliability (%)", "type": "text", "default": "15" },
+    { "name": "criteria_cost", "label": "Cost Competitiveness (%)", "type": "text", "default": "15"}
+
   ],
   "controls": { "allowUpload": false }
 }

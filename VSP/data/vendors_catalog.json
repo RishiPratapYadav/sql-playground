@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Acme Biologics",
+    "description": "Full-service biologics contract manufacturer with GMP-certified cleanrooms and sterile fill/finish capability. Strong in clinical-to-commercial scale-up.",
+    "services": ["Manufacturing", "Packaging"],
+    "certifications": ["GMP", "ISO9001"],
+    "countries": ["United States (FDA)", "European Union (EMA)"],
+    "capacity_per_month": 200000
+  },
+  {
+    "name": "BioGenix Solutions",
+    "description": "Analytical testing lab and stability studies provider with broad experience in vaccine analytics and release testing.",
+    "services": ["Testing/Analytical"],
+    "certifications": ["ISO17025"],
+    "countries": ["United States (FDA)", "Japan (PMDA)"],
+    "capacity_per_month": 300
+  },
+  {
+    "name": "PharmaPro Partners",
+    "description": "CDMO specializing in commercial packaging and serialization across multiple global markets. Competitive pricing for large volumes.",
+    "services": ["Packaging", "Serialization"],
+    "certifications": ["GMP", "ISO9001"],
+    "countries": ["European Union (EMA)", "United States (FDA)"],
+    "capacity_per_month": 500000
+  },
+  {
+    "name": "SterilePack Inc.",
+    "description": "Sterile manufacturing with strong cold-chain packaging options; experienced in injectable fill/finish and lyophilization.",
+    "services": ["Manufacturing", "Packaging"],
+    "certifications": ["GMP"],
+    "countries": ["United States (FDA)"],
+    "capacity_per_month": 150000
+  },
+  {
+    "name": "GlobalTest Labs",
+    "description": "Independent lab network providing analytical services, method development, and stability protocols for regulatory submissions.",
+    "services": ["Testing/Analytical"],
+    "certifications": ["ISO17025"],
+    "countries": ["China (NMPA)", "United States (FDA)"],
+    "capacity_per_month": 600
+  },
+  {
+    "name": "MedPack Services",
+    "description": "Contract packager focused on commercial packaging, kitting, and secondary packaging for specialty pharma and biologics.",
+    "services": ["Packaging"],
+    "certifications": ["GMP"],
+    "countries": ["European Union (EMA)", "United States (FDA)"],
+    "capacity_per_month": 200000
+  },
+  {
+    "name": "NextGen Pharma",
+    "description": "Flexible CDMO offering small-batch clinical manufacturing through to commercial licensing support; good for complex modalities.",
+    "services": ["Manufacturing"],
+    "certifications": ["GMP"],
+    "countries": ["Japan (PMDA)", "European Union (EMA)"],
+    "capacity_per_month": 80000
+  },
+  {
+    "name": "Vaxel Manufacturing",
+    "description": "High-throughput vaccine production and global distribution experience; support for serialization and cold chain logistics.",
+    "services": ["Manufacturing", "Serialization"],
+    "certifications": ["GMP"],
+    "countries": ["United States (FDA)", "European Union (EMA)", "China (NMPA)"],
+    "capacity_per_month": 1000000
+  },
+  {
+    "name": "EuroPharm Logistics",
+    "description": "Packaging and serialization specialist with strong European regulatory experience and multi-country supply chain capabilities.",
+    "services": ["Packaging", "Serialization"],
+    "certifications": ["ISO9001"],
+    "countries": ["European Union (EMA)"],
+    "capacity_per_month": 250000
+  },
+  {
+    "name": "Precision Analytics",
+    "description": "Analytical and testing specialists focusing on biologics characterization, high-sensitivity assays and method transfers.",
+    "services": ["Testing/Analytical"],
+    "certifications": ["ISO17025"],
+    "countries": ["United States (FDA)", "European Union (EMA)"],
+    "capacity_per_month": 400
+  }
+]
