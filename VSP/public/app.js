@@ -123,6 +123,61 @@ async function loadSchema(filePath) {
   // submit handler
   // `form` already defined above
 
+  // Save and create RFP handler
+  const saveCreateBtn = document.getElementById('save-create-rfp');
+  if (saveCreateBtn) {
+    saveCreateBtn.onclick = async (ev) => {
+      ev.preventDefault();
+      const fd = new FormData();
+      schema.fields.forEach(f => {
+        if (f.type === 'checkbox') {
+          const vals = Array.from(document.getElementsByName(f.name)).filter(i=>i.checked).map(i=>i.value);
+          fd.append(f.name, JSON.stringify(vals));
+        } else {
+          const el = form.elements[f.name]; if (!el) return;
+          fd.append(f.name, el.value);
+        }
+      });
+      // files
+      const fileInput = form.querySelector('input[type=file]');
+      if (fileInput && fileInput.files.length) {
+        for (let i=0;i<fileInput.files.length;i++) fd.append('files', fileInput.files[i]);
+      }
+      // mark as RFP
+      fd.append('status', 'rfp');
+      const resp = await fetch('/api/requests', { method: 'POST', body: fd });
+      const json = await resp.json();
+      showToast('Request saved, generating RFP…', 2000);
+      document.getElementById('result-area').hidden = false;
+      document.getElementById('result').innerText = JSON.stringify(json, null, 2);
+      await loadRequests();
+
+      // Now call the RFP generation endpoint
+      if (json && json.id) {
+        try {
+          const rfpResp = await fetch(`/api/generate_rfp/${json.id}`);
+          const rfpJson = await rfpResp.json();
+          if (rfpJson && rfpJson.download_url) {
+            // Show download link in result area
+            const resultArea = document.getElementById('result-area');
+            const rfpLink = document.createElement('a');
+            rfpLink.href = rfpJson.download_url;
+            rfpLink.innerText = 'Download RFP Document';
+            rfpLink.target = '_blank';
+            rfpLink.style.display = 'block';
+            rfpLink.style.marginTop = '12px';
+            resultArea.appendChild(rfpLink);
+            showToast('RFP document ready for download!', 3000);
+          } else {
+            showToast('Failed to generate RFP document', 3000);
+          }
+        } catch (e) {
+          showToast('Error generating RFP document', 3000);
+        }
+      }
+    };
+  }
+
   form.onsubmit = async (ev) => {
     ev.preventDefault();
     const fd = new FormData();

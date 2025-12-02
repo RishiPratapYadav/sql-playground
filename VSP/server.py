@@ -1,3 +1,4 @@
+# NOTE: RFP routes moved below after `app = FastAPI(...)` so `app` is defined before decorators are applied.
 
 from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
@@ -101,7 +102,7 @@ def read_vendor_embeddings():
     except Exception:
         return None
 
-
+ 
 def write_audit(record):
     a = []
     try:
@@ -454,6 +455,54 @@ async def create_request(request: Request):
     data.append(entry)
     write_all_requests(data)
     return {'success': True, 'id': new_id, 'entry': entry}
+
+
+# --- RFP DOCUMENT GENERATION ENDPOINT ---
+@app.post('/api/generate_rfp/{request_id}')
+def generate_rfp(request_id: str):
+    """Generate a simple RFP document (txt) from request data and return download link."""
+    data = read_all_requests()
+    req = next((r for r in data if r.get('id') == request_id), None)
+    if not req:
+        return JSONResponse({'error': 'Request not found'}, status_code=404)
+    body = req.get('body', {})
+    # Compose RFP text
+    lines = [
+        f"Request for Proposal (RFP)",
+        f"Request ID: {request_id}",
+        f"Project Name: {body.get('projectName','')}",
+        f"Description: {body.get('description','')}",
+        f"Company: {body.get('company_name','')}",
+        f"Primary Contact: {body.get('primary_contact','')}",
+        f"Email: {body.get('email','')}",
+        f"Request Type: {body.get('request_type','')}",
+        f"Services Needed: {body.get('services_needed','')}",
+        f"Target Markets: {body.get('target_markets','')}",
+        f"Budget: {body.get('budget','')}",
+        f"Decision Deadline: {body.get('decisionDeadline','')}",
+        f"Additional Info: {body.get('additional_info','')}",
+        f"Key Criteria: {body.get('keyCriteria','')}",
+        '',
+        'Thank you for considering this RFP.'
+    ]
+    rfp_text = '\n'.join(lines)
+    # Save to file
+    rfp_dir = os.path.join(DATA_DIR, 'rfps')
+    os.makedirs(rfp_dir, exist_ok=True)
+    rfp_path = os.path.join(rfp_dir, f"{request_id}_rfp.txt")
+    with open(rfp_path, 'w', encoding='utf-8') as f:
+        f.write(rfp_text)
+    # Return download link (match frontend expected key)
+    return {'success': True, 'download_url': f"/data/rfps/{request_id}_rfp.txt"}
+
+
+@app.get('/data/rfps/{filename}')
+def get_rfp_file(filename: str):
+    rfp_dir = os.path.join(DATA_DIR, 'rfps')
+    rfp_path = os.path.join(rfp_dir, filename)
+    if os.path.exists(rfp_path):
+        return FileResponse(rfp_path, media_type='text/plain', filename=filename)
+    return JSONResponse({'error': 'not found'}, status_code=404)
 
 
 @app.get('/uploads/{filename}')

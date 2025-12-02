@@ -1,0 +1,16 @@
+Request for Proposal (RFP)
+Request ID: REQ-TEST-RFP-1
+Project Name: Test Project
+Description: Testing RFP generation
+Company: Acme Corp
+Primary Contact: Jane Doe
+Email: jane@acme.example
+Request Type: Manufacturing
+Services Needed: Packaging
+Target Markets: USA
+Budget: 100000
+Decision Deadline: 2025-12-31
+Additional Info: N/A
+Key Criteria: speed, quality
+
+Thank you for considering this RFP.
